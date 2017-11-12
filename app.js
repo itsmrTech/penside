@@ -1,6 +1,9 @@
 //CONNECT TO DATABASE
 var db=require('./config/mongoose').run();
 
+//AUTHENTICATION
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
 
 
@@ -21,6 +24,16 @@ var papersRouter = require('./routes/papers');
 
 
 var app = express();
+
+//AUTHENTICATION WITH EXPRESS
+app.use(passport.initialize());
+app.use(passport.session());
+
+//PASSPORT CONFIGURATION
+var UserDB = require('./schemas/user');
+passport.use(new LocalStrategy(UserDB.authenticate()));
+passport.serializeUser(UserDB.serializeUser());
+passport.deserializeUser(UserDB.deserializeUser());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
