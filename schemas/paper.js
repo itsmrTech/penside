@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var paperSchema = mongoose.Schema({
-    title: String,
+    title: { type:String , required:true},
     text: String,
     user: {
         type: mongoose.SchemaTypes.ObjectId,
