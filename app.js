@@ -31,7 +31,9 @@ app.use(passport.session());
 
 //PASSPORT CONFIGURATION
 var UserDB = require('./schemas/user');
-passport.use(new LocalStrategy(UserDB.authenticate()));
+passport.use(new LocalStrategy({
+  username: 'signature'
+},UserDB.authenticate()));
 passport.serializeUser(UserDB.serializeUser());
 passport.deserializeUser(UserDB.deserializeUser());
 
