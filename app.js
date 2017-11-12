@@ -1,3 +1,10 @@
+//CONNECT TO DATABASE
+var db=require('./config/mongoose').run();
+
+
+
+
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
