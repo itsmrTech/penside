@@ -1,6 +1,5 @@
 var express = require('express');
 var User = require("../schemas/user");
-var passport = require("passport");
 var router = express.Router();
 
 /* GET users listing. */
