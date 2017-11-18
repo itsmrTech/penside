@@ -57,10 +57,17 @@ router.post("/login", function (req, res) {
     else {
       //Check Password
       bcrypt.compare(req.body.password, foundUser.password, function (err, result) {
+        console.log(err,result)
         if (err) {
           res.send({
-            result: false,
+            loginedStatus: false,
             error: err,
+          })
+        }
+        else if(result==false){
+          res.send({
+            loginedStatus:false,
+            error:"Wrong Password"
           })
         } else {
           // Add Device 
@@ -78,25 +85,24 @@ router.post("/login", function (req, res) {
                 error: err
               });
             } else {
+              
+              var userForSend = {
+                "_id": foundUser._id,
+                "firstName": foundUser.firstName,
+                "lastName": foundUser.lastName,
+                "signature": foundUser.signature,
+                "email": foundUser.email,
+                "phone": foundUser.phone,
+              }
               res.send({
                 loginedStatus: true,
-                Token: generateHash(savedDevice._id),
-              })
+                loginedUser: userForSend,
+                token: generateHash(savedDevice._id),
+              });
             }
           });
 
-          var userForSend = {
-            "_id": foundUser._id,
-            "firstName": foundUser.firstName,
-            "lastName": foundUser.lastName,
-            "signature": foundUser.signature,
-            "email": foundUser.email,
-            "phone": foundUser.phone,
-          }
-          res.send({
-            loginedStatus: true,
-            loginedUser: userForSend
-          });
+          
         }
       })
 
