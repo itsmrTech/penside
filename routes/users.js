@@ -1,6 +1,6 @@
 var express = require('express');
 var User = require("../schemas/user");
-var bcrypt   = require('bcrypt-nodejs');
+var bcrypt = require('bcrypt-nodejs');
 var router = express.Router();
 
 /* GET users listing. */
@@ -8,6 +8,7 @@ router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
 
+// Register New User
 router.post("/register", function (req, res) {
   var newUser = new User({
     firstName: req.body.firstName,
@@ -18,7 +19,7 @@ router.post("/register", function (req, res) {
     phone: req.body.phone,
   });
 
-  newUser.save(function (err, registeredItem) {
+  newUser.save(function (err, registeredUser) {
     if (err) {
       res.send({
         registeredStatus: false,
@@ -28,14 +29,36 @@ router.post("/register", function (req, res) {
     else {
       res.send({
         registeredStatus: true,
-        registeredUser: registeredItem
+        registeredUser: registeredUser
+      });
+    }
+  })
+})
+
+// Login
+router.post("/login", function (req, res) {
+  User.findOne({
+    $or: [{ email: req.body.field },
+    { phone: req.body.field },
+    { signature: req.body.field }]
+  }, function (err, foundUser) {
+    if (err) {
+      res.send({
+        loginedStatus: false,
+        error: err
+      });
+    }
+    else {
+      res.send({
+        loginedStatus: true,
+        loginedUser: foundUser
       });
     }
   })
 })
 
 // generating a hash
-function generateHash (password) {
+function generateHash(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
