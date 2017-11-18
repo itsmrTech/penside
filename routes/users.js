@@ -1,7 +1,9 @@
 var express = require('express');
 var User = require("../schemas/user");
+var Device = require("../schemas/device");
 var bcrypt = require('bcrypt-nodejs');
 var router = express.Router();
+
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -35,24 +37,69 @@ router.post("/register", function (req, res) {
   })
 })
 
-// Login
+// Login User
 router.post("/login", function (req, res) {
   User.findOne({
-    $or: [{ email: req.body.field },
-    { phone: req.body.field },
-    { signature: req.body.field }]
+    $or: [{ email: req.body.authenticationField },
+    { phone: req.body.authenticationField },
+    { signature: req.body.authenticationField }]
   }, function (err, foundUser) {
     if (err) {
       res.send({
         loginedStatus: false,
         error: err
       });
+    } else if (!foundUser) {
+      res.send({
+        loginedStatus: false
+      });
     }
     else {
-      res.send({
-        loginedStatus: true,
-        loginedUser: foundUser
-      });
+      //Check Password
+      bcrypt.compare(req.body.password, foundUser.password, function (err, result) {
+        if (err) {
+          res.send({
+            result: false,
+            error: err,
+          })
+        } else {
+          // Add Device 
+          var newDevice = new Device(
+            {
+              MACAddress: req.body.MACAddress,
+              user: foundUser._id,
+              IP: req.body.IP,
+            }
+          );
+          newDevice.save(function (err, savedDevice) {
+            if (err) {
+              res.send({
+                loginedStatus: false,
+                error: err
+              });
+            } else {
+              res.send({
+                loginedStatus: true,
+                Token: generateHash(savedDevice._id),
+              })
+            }
+          });
+
+          var userForSend = {
+            "_id": foundUser._id,
+            "firstName": foundUser.firstName,
+            "lastName": foundUser.lastName,
+            "signature": foundUser.signature,
+            "email": foundUser.email,
+            "phone": foundUser.phone,
+          }
+          res.send({
+            loginedStatus: true,
+            loginedUser: userForSend
+          });
+        }
+      })
+
     }
   })
 })

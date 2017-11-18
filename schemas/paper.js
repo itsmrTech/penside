@@ -5,10 +5,9 @@ var paperSchema = mongoose.Schema({
     text: String,
     user: {
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required : true,
     },
-
-
     status:{type:Number,default:1},
     createdAt:{type:Date,default:Date.now}
 });
