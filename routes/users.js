@@ -2,6 +2,7 @@ var express = require('express');
 var User = require("../schemas/user");
 var Device = require("../schemas/device");
 var bcrypt = require('bcrypt-nodejs');
+var jwt = require('jsonwebtoken');
 var router = express.Router();
 
 
@@ -57,17 +58,17 @@ router.post("/login", function (req, res) {
     else {
       //Check Password
       bcrypt.compare(req.body.password, foundUser.password, function (err, result) {
-        console.log(err,result)
+        console.log(err, result)
         if (err) {
           res.send({
             loginedStatus: false,
             error: err,
           })
         }
-        else if(result==false){
+        else if (result == false) {
           res.send({
-            loginedStatus:false,
-            error:"Wrong Password"
+            loginedStatus: false,
+            error: "Wrong Password"
           })
         } else {
           // Add Device 
@@ -85,7 +86,7 @@ router.post("/login", function (req, res) {
                 error: err
               });
             } else {
-              
+
               var userForSend = {
                 "_id": foundUser._id,
                 "firstName": foundUser.firstName,
@@ -94,15 +95,26 @@ router.post("/login", function (req, res) {
                 "email": foundUser.email,
                 "phone": foundUser.phone,
               }
-              res.send({
-                loginedStatus: true,
-                loginedUser: userForSend,
-                token: generateHash(savedDevice._id),
-              });
+              jwt.sign({ "id" : savedDevice._id}, "3Dozde Boz Dozd Raftan Boz Dozdi YeDozde Boz Dozd 3Boz Dozdid 3 Dozde Boz Dozd Be Ye Dozde Boz Dozd Goftan Ma Ke 3 Dozde Boz Dozdim Ye Boz Dozdidim Toke YE Dozde Boz Dozdi 3 Boz Dozdidi.", function (err, token) {
+                if (err) {
+                  console.log(err,token)
+                  res.send({
+                    loginedStatus: false,
+                    error: err
+                  });
+                } else {
+                  res.send({
+                    loginedStatus: true,
+                    loginedUser: userForSend,
+                    token: token,
+                  });
+                }
+              })
+
             }
           });
 
-          
+
         }
       })
 
