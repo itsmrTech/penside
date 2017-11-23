@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 var Paper = require("../schemas/paper");
 var Device = require("../schemas/device");
-var User = require("../schemas/user")
+var User = require("../schemas/user");
+var {checkToken} = require("../midlewares/auth")
 var jwt = require('jsonwebtoken');
 
 
@@ -67,5 +68,7 @@ router.post('/add', function (req, res) {
 
 });
 
-rout.post("/add",function(err,))
+router.post("/add",function(req,res){
+
+})
 module.exports = router;
