@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Paper = require("../schemas/paper");
 var Device = require("../schemas/device");
+var User = require("../schemas/user")
 var jwt = require('jsonwebtoken');
 
 
@@ -25,27 +26,37 @@ router.post('/add', function (req, res) {
                         });
                     }
                     else {
+                        User.findOne({
+                            _id: foundDevice.user,
+                        }).exec(function (err, foundUser) {
+                            if (err) {
+                                return res.send({
+                                    foundUser: false,
+                                    auth: false,
+                                    error: err
+                                })
+                            }
 
-                    }
-                })
+                            var newPaper = new Paper({
+                                title: req.body.title,
+                                text: req.body.text,
+                                user: foundUser._id,
+                            });
 
-                var newPaper = new Paper({
-                    title: req.body.title,
-                    text: req.body.text,
-                    user: req.body.user_id,
-                });
-
-                newPaper.save(function (err, savedItem) {
-                    if (err) {
-                        res.send({
-                            savedStatus: false,
-                            error: err
-                        });
-                    }
-                    else {
-                        res.send({
-                            savedStatus: true,
-                            savedPaper: savedItem
+                            newPaper.save(function (err, savedItem) {
+                                if (err) {
+                                    res.send({
+                                        savedStatus: false,
+                                        error: err
+                                    });
+                                }
+                                else {
+                                    res.send({
+                                        savedStatus: true,
+                                        savedPaper: savedItem
+                                    })
+                                }
+                            })
                         })
                     }
                 })
