@@ -1,10 +1,15 @@
 var mongoose = require('mongoose');
 
 var fileSchema = mongoose.Schema({
-    path: String,
+    path:{
+        type: String,
+        unique: true,
+        required: true
+    },
     owner: {
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     type:String,
     status: {

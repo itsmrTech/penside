@@ -1,19 +1,42 @@
 var mongoose = require('mongoose');
-var bcrypt   = require('bcrypt-nodejs');
+var bcrypt = require('bcrypt-nodejs');
 
 var userSchema = mongoose.Schema({
-    firstName: String,
-    lastName: String,
+    // require field should be applied
+    firstName: {
+        type: String,
+        required: true
+    },
+
+    lastName: {
+        type: String,
+        required: true
+    },
+
     signature: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
+
     email: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
-    password: String,
-    phone: String,
+
+    password: {
+        type: String,
+        unique: true,
+        required: true
+    },
+
+    phoneNumber: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    
     picture: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'File'

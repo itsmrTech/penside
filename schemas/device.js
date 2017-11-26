@@ -2,14 +2,21 @@ var mongoose = require("mongoose");
 
 
 var deviceSchema = mongoose.Schema({
-    MACAddress: String,
+    MACAddress: {
+        type: String,
+        required: true
+    },
 
     user: {
         ref: "User",
         type: mongoose.SchemaTypes.ObjectId,
+        required: true
     },
 
-    IP: String,
+    IP: {
+        type: String,
+        required: true
+    },
 
     createdAt: {
         type: Date,
@@ -20,7 +27,7 @@ var deviceSchema = mongoose.Schema({
     status: {
         type: Number,
         default: 1,
-    } 
+    }
 });
 
 module.exports = mongoose.model("Device", deviceSchema);
